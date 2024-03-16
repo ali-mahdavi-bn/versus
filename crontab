@@ -1,0 +1,6 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+
+00 22 * * *  root   /bin/bash -c ". /cron.env; cd /app/ && python src/manage.py manage.py IeeeConvertArticleSpider"
+00 22 * * *  root   /bin/bash -c ". /cron.env; cd /app/ && python src/workers.py"

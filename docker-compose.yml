@@ -1,0 +1,67 @@
+services:
+#  # PostgreSQL database
+#  postgres:
+#    image: postgres:16
+#    container_name: postgres
+#    restart: always
+#    environment:
+#      POSTGRES_DB: "postgres"
+#      POSTGRES_USER: "postgres"
+#      POSTGRES_PASSWORD: "postgres"
+#    ports:
+#      - "5433:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    networks:
+#      - main
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6380
+    ports:
+      - "6380:6380"
+    networks:
+      - main
+
+#  # FastAPI application
+#  fastapi_app:
+#    build:
+#      context: .
+#    depends_on:
+#      - postgres
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - ./:/app
+#    command: [ "python","src/main.py" ]
+#    networks:
+#      - main
+#
+#volumes:
+#  postgres_data:
+#  src:
+#
+#
+networks:
+  main:
+
+#version: '3'
+#
+#services:
+#  minio:
+#    image: minio/minio
+#    restart: always
+#    environment:
+#      MINIO_ROOT_USER: minio
+#      MINIO_ROOT_PASSWORD: minio123
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    volumes:
+#      - ./data:/data
+#    command: server /data --console-address :9001
+#
+#
