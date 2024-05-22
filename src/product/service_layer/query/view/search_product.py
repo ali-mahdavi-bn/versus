@@ -10,9 +10,10 @@ def search_product_view(command: SearchProducts, uow: UnitOfWork = Provider[Cont
     with uow:
         if command.category_id:
             filter_clauses, values, values_int, category = parser_filters(filters)
-            products = uow.product.search_product(filter_clauses=filter_clauses,category=category, language=command.language,
-                                                  values=values,
-                                                  values_int=values_int, limit=command.limit, offset=command.page)
+            products = uow.product.search_product(filter_clauses=filter_clauses, category=category,
+                                                  language=command.language, values=values,
+                                                  values_int=values_int, limit=command.limit,
+                                                  offset=command.page)
             faced = uow.category.get_attributes_category(command.category_id,
                                                          attribute_id=filter_clauses)
 

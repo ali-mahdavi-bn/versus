@@ -2,7 +2,7 @@ import time
 from typing import Callable
 
 from backbone.container.container import Container, Provider
-from backbone.infrastructure.log._logger import Logger
+from backbone.infrastructure.log.logger import Logger
 from backbone.worker.abstract_worker import AbstractWorker
 from backbone.worker.exeptions.break_worker import BreakWorker
 from backbone.worker.exeptions.don_finished_worker import DonFinishedWorker

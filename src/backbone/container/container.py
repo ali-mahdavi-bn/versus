@@ -3,7 +3,7 @@ from backbone.configs import Config
 from backbone.container.injector import DependencyContainer, CallableDependency, SingletonDependency
 from backbone.helpers.colors import Color
 from backbone.helpers.translator import Translator
-from backbone.infrastructure.log._logger import Logger
+from backbone.infrastructure.log.logger import Logger
 from unit_of_work import UnitOfWork
 
 

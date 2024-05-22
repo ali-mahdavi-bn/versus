@@ -55,7 +55,7 @@ class SqlalchemyProductRepository(AbstractProductRepository, AbstractSqlalchemyR
                             MAX(pv.value_int) AS max,
                             AVG(pv.value_int) AS avg
                      FROM attributes ca
-                              LEFT JOIN products_value pv ON pv.attribute_id = ca.uuid
+                              LEFT JOIN product_values pv ON pv.attribute_id = ca.uuid
                      where ca.uuid = :attribute_id
                      GROUP BY ca.uuid),
      fake_g2 as (select generate_series(min, max, (max - min) / 24) b2
@@ -68,7 +68,7 @@ class SqlalchemyProductRepository(AbstractProductRepository, AbstractSqlalchemyR
                           (max * 1.1 - min) / 12                            step_size,
                           min,
                           count(*)                                       as freq
-                   from products_value pv
+                   from product_values pv
                             right join min_max_avg ON pv.attribute_id = min_max_avg.uuid
                    where pv.attribute_id = :attribute_id
                      and min != max
@@ -112,10 +112,10 @@ from histogram h
                                          json_build_object('value', pvp.value, 'value_int', pvp.value_int, 'unit',
                                                            pvp.unit)) AS value
                 FROM ca
-                         LEFT JOIN products_value AS pv ON pv.attribute_id = ca.uuid AND
+                         LEFT JOIN product_values AS pv ON pv.attribute_id = ca.uuid AND
                                                            (pv.value IN :value OR pv.value_int IN :value_int)
                          LEFT JOIN products p ON p.uuid = pv.product_id
-                         LEFT JOIN products_value AS pvp ON pvp.product_id = p.uuid
+                         LEFT JOIN product_values AS pvp ON pvp.product_id = p.uuid
                          LEFT JOIN attributes cac ON pvp.attribute_id = cac.uuid
                          LEFT JOIN attributes_translate tct ON tct.attribute_id = cac.uuid and tct.language = :language
                          LEFT JOIN products_translate tp ON tp.product_id = p.uuid and tp.language = :language),
@@ -151,22 +151,24 @@ select json_build_object(
                                'id', pv.id,
                                'ca', ca.uuid,
                                'name', tc.name,
-                               'type', ca.type,
+                               -- 'type', ca.type,
                                'value', pv.value,
                                'value_int', pv.value_int,
                                'unit', pv.unit
                        )
                       )
        )
-from products_value pv
-         join products p on p.slug=:product_id and p.uuid = pv.product_id
+from product_values pv
+         join products p on p.slug=:product_slug and p.uuid = pv.product_id
          join attributes_translate tc on tc.attribute_id = pv.attribute_id and tc.language=:language
          join attributes ca on ca.uuid=pv.attribute_id
 group by p.slug, p.id""", {
-            "product_id": slug,
+            "product_slug": slug,
             "language": language
 
         }).fetchall()
+        print(slug)
+        print(product)
         return product[0][0] if product else None
 
     def _others_products(self):
@@ -198,7 +200,7 @@ FROM (SELECT p.uuid,
              ROW_NUMBER() OVER (PARTITION BY p.uuid ORDER BY ca.uuid) AS rn
       FROM products p
                JOIN products_translate tp ON tp.product_id = p.uuid
-               JOIN products_value pv ON pv.product_id = p.uuid
+               JOIN product_values pv ON pv.product_id = p.uuid
                JOIN attributes ca ON ca.uuid = pv.attribute_id
                JOIN group_attributes ga ON ga.uuid = ca.group_attribute_id
                JOIN attributes_translate tc ON tc.attribute_id = ca.uuid) AS sub

@@ -1,16 +1,18 @@
+from backbone.crawler.crawl import Crawler
+from backbone.helpers.utils import collect_handlers_functions
 from backbone.service_layer.abstract_messagebus import MessageBus
 from backbone.service_layer.abstract_unit_of_work import AbstractUnitOfWork
 from backbone.service_layer.dependency_injection import inject_dependencies
-from backbone.helpers.utils import collect_handlers_functions
-from unit_of_work import UnitOfWork
 from product.service_layer import command_handlers
 from product.service_layer import event_handlers
+from unit_of_work import UnitOfWork
 
 
 def bootstrap(
         uow: AbstractUnitOfWork = UnitOfWork(),
+        crw: Crawler = Crawler(),
 ) -> MessageBus:
-    dependencies = {"uow": uow}
+    dependencies = {"uow": uow, "crw": crw}
     injected_event_handlers = {
         event_type: [
             inject_dependencies(handler, dependencies)

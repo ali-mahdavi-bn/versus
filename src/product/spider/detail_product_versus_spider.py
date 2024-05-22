@@ -51,6 +51,7 @@ class DetailProductVersusSpider(Spider):
         category_attributes = products.get("comparison").get("tldr")
         category_attributes_and_groups = products.get("comparison").get("propGroups")
         name_current_product = products.get("objects").get(next(iter(products.get("objects")))).get("name")
+        translate_attribute_language = 2
         for category_attribute in category_attributes:
             for i in category_attribute:
                 name_category = i.get("name")
@@ -58,7 +59,6 @@ class DetailProductVersusSpider(Spider):
                 attribute_uuid: UUID = uuid4()
                 translate_attribute_show_name = i.get("ax")
                 translate_attribute_description = i.get("x")
-                translate_attribute_language = 2
                 unit_attribute = i.get('unit')
 
                 self.add_translate_category(uuid=translate_attribute_uuid, name=name_category,

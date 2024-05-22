@@ -51,14 +51,14 @@ WITH distencted_attr AS (SELECT DISTINCT ON (ca.id::text || pv.value::text) ca.i
                                                                             pv.value,
                                                                             pv.unit
                          FROM attributes ca
-                                  JOIN products_value pv ON ca.uuid = pv.attribute_id
+                                  JOIN product_values pv ON ca.uuid = pv.attribute_id
                          WHERE pv.value IS NOT NULL
                            AND ca.category_id = :category_id),
      distencted_attr_int AS (SELECT DISTINCT ON (ca.id::text || pv.value_int::text) ca.id,
                                                                                     pv.value_int,
                                                                                     pv.unit
                              FROM attributes ca
-                                      JOIN products_value pv ON ca.uuid = pv.attribute_id
+                                      JOIN product_values pv ON ca.uuid = pv.attribute_id
                              WHERE pv.value_int IS NOT NULL
                                AND ca.category_id = :category_id),
 
@@ -82,7 +82,7 @@ select json_build_object(
                                'show_name', tc.show_name,
                                'att_id', ca.id,
                                'selected', ca.id in :attribute_id,
-                               'type', ca.type,
+                               -- 'type', ca.type,
                                'values', (select v.value
 
                                           from values v

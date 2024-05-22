@@ -49,7 +49,7 @@ class Logger():
         self.loguru_logger.exception(message, **kwargs)
 
     @abstractmethod
-    def warning(self, message, **kwargs):
+    def warning(self, message: object, **kwargs: object) -> object:
         self.loguru_logger.warning(message, **kwargs)
 
 

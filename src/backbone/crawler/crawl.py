@@ -1,5 +1,5 @@
 import time
-from typing import Protocol, Iterable
+from typing import Protocol, Callable, Type
 
 from backbone.container.container import Provider, Container
 from backbone.crawler.exeptions.break_worker import BreakWorkerSpider
@@ -9,7 +9,7 @@ from backbone.crawler.exeptions.restart_worker import RestartWorkerSpider
 from backbone.crawler.exeptions.stop_worker import StopWorkerSpider
 from backbone.crawler.helper.adapter.abstract_crawl import AbstractCrawl
 from backbone.crawler.helper.helpers.response import Response
-from backbone.infrastructure.log._logger import Logger
+from backbone.infrastructure.log.logger import Logger
 
 
 class SpiderProtocol(Protocol):
@@ -20,9 +20,9 @@ class Crawler(AbstractCrawl):
 
     def __init__(self, lifespan=None):
 
+        (self._lifespan(lifespan)) if lifespan else None
         self._time_start_worker_stopped = None
         self._conditional_start = None
-        (self._lifespan(lifespan)) if lifespan else None
 
         self._is_crawling = True
         self._is_run_worker = True
@@ -38,8 +38,7 @@ class Crawler(AbstractCrawl):
 
     def _run_flow(self, request):
         content = Response(request=request)
-        next_flow: Iterable = request.callback(content)
-        if next_flow:
+        if next_flow := request.callback(content):
             for nf in next_flow:
                 self._run_flow(request=nf)
 
@@ -64,19 +63,19 @@ class Crawler(AbstractCrawl):
             except Exception as e:
                 logger.info(f"Spider Error: {e}")
 
-    def start_worker(self, spider, conditional_break=None, time_sleep_next_every_run=300,
+    def start_worker(self, spider: Type[SpiderProtocol], conditional_break=None, time_sleep_next_every_run=300,
                      logger: Logger = Provider[Container.logger]):
 
         logger.info("🚀Worker Running...")
         while True:
             if self._conditional_start:
-                logger.warning(f"Try Start Worker")
+                logger.warning("Try Start Worker")
                 try:
                     if self._conditional_start():
                         self._start_worker()
-                        logger.info(f"Worker Started")
-                except:
-                    logger.warning(f"Fail Try Start Worker")
+                        logger.info("Worker Started")
+                except Exception:
+                    logger.warning("Fail Try Start Worker")
                     time.sleep(self._time_start_worker_stopped)
                     continue
 
@@ -90,23 +89,23 @@ class Crawler(AbstractCrawl):
                     if request:
                         self._run_flow(request=request)
                 time.sleep(time_sleep_next_every_run)
-            except BreakWorkerSpider as e:
-                logger.info(f"Worker Break :(")
+            except BreakWorkerSpider:
+                logger.info("Worker Break :(")
                 break
-            except DonWorkerSpider as e:
-                logger.info(f"Worker Don... :)")
+            except DonWorkerSpider:
+                logger.info("Worker Don... :)")
                 time.sleep(time_sleep_next_every_run)
-            except DonFinishedWorkerSpider as e:
-                logger.info(f"Worker Don... :)")
-                logger.info(f"Worker Finished... :)")
+            except DonFinishedWorkerSpider:
+                logger.info("Worker Don... :)")
+                logger.info("Worker Finished... :)")
                 break
-            except RestartWorkerSpider as e:
-                logger.info(f"Worker restart... :)")
+            except RestartWorkerSpider:
+                logger.info("Worker restart... :)")
                 continue
             except StopWorkerSpider as e:
                 self._conditional_start = e.args[0]
-                self._time_start_worker_stopped = e.args[1] if e.args[1] else time_sleep_next_every_run / 2
-                logger.info(f"Worker Stopped :|")
+                self._time_start_worker_stopped = e.args[1] or time_sleep_next_every_run / 2
+                logger.info("Worker Stopped :|")
                 time.sleep(self._time_start_worker_stopped)
             except Exception as e:
                 logger.error(f"Worker Error: {e} ")

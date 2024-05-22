@@ -34,6 +34,7 @@ def _translate_products(uow, languages, translator: Translator = Provider[Contai
 
 
 def products_translate_worker():
+    # raise Exception('products')
     uow = UnitOfWork()
     with uow:
         languages: List[Language] = uow.language.orm.all()

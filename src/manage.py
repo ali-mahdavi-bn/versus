@@ -26,8 +26,8 @@ def inject_command_to_bus(command_obj: Callable, command_argument: CommandArgume
     bus.handle(command)
 
 
-def loop_in_commands(module, command_argument: CommandArgument, target_command_handler_name: str) -> None:
-    for command_name, command_obj in getmembers(module.domain.commands, isclass):
+def find_and_run_command(module_app, command_argument: CommandArgument, target_command_handler_name: str) -> None:
+    for command_name, command_obj in getmembers(module_app.domain.commands, isclass):
 
         if target_command_handler_name == command_name:
             inject_command_to_bus(command_obj, command_argument)
@@ -45,4 +45,4 @@ if __name__ == "__main__":
 
     modules_project = settings.MODULES
     for module in modules_project:
-        loop_in_commands(module=module, command_argument=argument, target_command_handler_name=target_class_name)
+        find_and_run_command(module_app=module, command_argument=argument, target_command_handler_name=target_class_name)

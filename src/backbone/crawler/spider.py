@@ -8,9 +8,10 @@ class Spider(AbstractSpider):
     def start_requests(self, **kwargs) -> Iterator[RequestArgs]:
         raise NotImplementedError
 
-    def from_crawler(self, crawler=None) -> Iterator[start_requests]:
+
+    def from_crawler(cls, crawler=None) -> Iterator[start_requests]:
         try:
-            yield from self.start_requests()
+            yield from cls.start_requests()
         except Exception as e:
-            print(str(e))
+            print(e)
             yield []

@@ -48,10 +48,11 @@ def parse_query_params(query_params):
         value = param[1]
         if key == 'limit' and (isinstance(value, str) and value.isdigit()) or (isinstance(value, int)):
             limit = int(value)
+            continue
         elif key == 'page' and (isinstance(value, str) and value.isdigit()) or (isinstance(value, int)):
             page = int(value) * limit
+            continue
         elif key == 'category':
-
             category_id = value
         query_params_dict[key] = value
     return query_params_dict, category_id, limit, page

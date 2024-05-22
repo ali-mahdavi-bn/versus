@@ -5,8 +5,8 @@ from typing import Optional, Any
 from bs4 import BeautifulSoup
 
 from backbone.container.container import Provider, Container
-from backbone.infrastructure.log._logger import Logger
 from backbone.crawler.helper.helpers.requests import RequestArgs
+from backbone.infrastructure.log.logger import Logger
 
 
 @dataclass
@@ -39,7 +39,7 @@ class Response:
         request = self.request
         self._count_fail_request = 0
         time_asked_again = 0
-        for i in range(3):
+        for _ in range(3):
             time.sleep(time_asked_again)
             try:
                 self._response_get = request.get()
@@ -48,7 +48,9 @@ class Response:
                 return self._response_get, request
             except Exception as e:
                 if self._count_fail_request == 3:
-                    raise ValueError(f"fail count: {self._count_fail_request}  reference: {e.args}")
+                    raise ValueError(
+                        f"fail count: {self._count_fail_request}  reference: {e.args}"
+                    ) from e
                 self._count_fail_request += 1
                 time_asked_again += 3
                 self._print_warning(e)
@@ -76,25 +78,23 @@ class Response:
         if self._css_selector:
             return self._execute_css_selector()
         elif self._find_selector:
-            element = self._execute_object_selector()
-            if element:
+            if element := self._execute_object_selector():
                 return element.get(attribute)
-            return element
+            else:
+                return element
 
     def find_all(self, tag, class_=None) -> BeautifulSoup.find_all:
         soup_obj = BeautifulSoup(self.content, 'html.parser')
-        element = soup_obj.find_all(tag, class_=class_)
-        return element
+        return soup_obj.find_all(tag, class_=class_)
 
     def _execute_css_selector(self):
         soup_obj = BeautifulSoup(self.content, 'html.parser')
-        if "::text" in self._selector:
-            selector = self._selector.replace("::text", "")
-            return soup_obj.select(selector)[0].get_text(strip=True)
-        else:
+        if "::text" not in self._selector:
             return str(soup_obj.select(self._selector)[0])
+        selector = self._selector.replace("::text", "")
+        return soup_obj.select(selector)[0].get_text(strip=True)
+
 
     def _execute_object_selector(self):
         soup_obj = BeautifulSoup(self.content, 'html.parser')
-        element = soup_obj.find(self._tag, self._selector)
-        return element
+        return soup_obj.find(self._tag, self._selector)

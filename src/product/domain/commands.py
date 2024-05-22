@@ -1,7 +1,6 @@
-from typing import Optional
 from uuid import UUID
 
-from backbone.service_layer.general_types import Command
+from backbone.service_layer.general_types import Command, Dao
 
 
 class CategoryVersus(Command): pass
@@ -21,6 +20,6 @@ class SearchProducts(Command):
 class DetailProductVersus(Command): pass
 
 
-class GetProduct(Command):
-    product_id: str
+class GetProduct(Dao):
+    product_slug: str
     language: int

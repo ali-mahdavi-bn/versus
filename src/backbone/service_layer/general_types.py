@@ -32,7 +32,7 @@ class Command(BaseModel):
     pass
 
 
-class Dto(BaseModel):
+class Dao(BaseModel):
     pass
 
 

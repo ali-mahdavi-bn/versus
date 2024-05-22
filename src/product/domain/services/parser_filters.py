@@ -1,5 +1,5 @@
 def parser_filters(filters):
-    pagination_name = ["limit", "page"]
+    # pagination_name = ["limit", "page"]
 
     filter_clauses = []
     values = []
@@ -8,7 +8,8 @@ def parser_filters(filters):
 
     for k, v in filters.items():
         att = k[:4]
-        if k not in pagination_name and att == "att_":
+        # if k not in pagination_name and att == "att_":
+        if att == "att_":
             filter_clauses.append(int(k[4:]))
             if v.isdigit():
                 values_int.append(int(v))

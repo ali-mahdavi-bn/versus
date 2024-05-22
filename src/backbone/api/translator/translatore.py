@@ -9,7 +9,11 @@ dict_translate = {
     "message": {
         "fa": json.loads(Path(root_path_.joinpath(f'apis/translator/phrases/message/fa.json')).read_text(
             encoding="utf-8"))
-    }
+    },
+    "error": {
+        "fa": json.loads(Path(root_path_.joinpath(f'apis/translator/phrases/error/fa.json')).read_text(
+            encoding="utf-8"))
+    },
 }
 
 
@@ -19,10 +23,9 @@ def _get_lan(type, lan='fa'):
     return json_load
 
 
-def translate(*, phrase, type, lan='fa'):
-    parse_translate = dict_translate.get(type).get(lan)
-    if parse_translate:
+def translate(*, phraseMessage, type="error", lan='fa'):
+    if parse_translate := dict_translate.get(type).get(lan):
         return parse_translate
 
     lan = _get_lan(type, lan=lan)
-    return lan[phrase]
+    return lan[phraseMessage]

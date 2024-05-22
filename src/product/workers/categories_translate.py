@@ -2,9 +2,10 @@ import time
 from typing import List
 
 from backbone.helpers.translator import Translator
-from backbone.infrastructure.log._logger import Logger
+from backbone.infrastructure.log.logger import Logger
 from mapper import mapper_init
-from product.domain.entities import AttributeTranslate, Language
+from product.domain.entities.attribute.attribute_translate import AttributeTranslate
+from product.domain.language import Language
 from unit_of_work import UnitOfWork
 
 mapper_init()
@@ -42,8 +43,7 @@ def categories_translate_worker():
     while True:
         try:
             with uow:
-                categories = _translate_categories(uow, languages)
-                if categories:
+                if categories := _translate_categories(uow, languages):
                     uow.session.bulk_save_objects(categories)
                     uow.commit()
             time.sleep(300)

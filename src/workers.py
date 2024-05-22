@@ -1,7 +1,7 @@
 from multiprocessing import Pool
 
 from backbone.container.container import Provider, Container
-from backbone.infrastructure.log._logger import Logger
+from backbone.infrastructure.log.logger import Logger
 from backbone.worker.worker import Worker
 from product.workers.products_translate import products_translate_worker
 

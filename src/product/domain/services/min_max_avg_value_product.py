@@ -11,7 +11,7 @@ def min_max_avg_value_product(language_id):
                                    MAX(pv.value_int) AS max_value,
                                    AVG(pv.value_int) AS avg_value
                             FROM attributes ca
-                                     LEFT JOIN products_value pv ON pv.attribute_id = ca.uuid
+                                     LEFT JOIN product_values pv ON pv.attribute_id = ca.uuid
                                      LEFT JOIN attributes_translate tc
                                                ON tc.attribute_id = pv.attribute_id AND tc.language = :language_id
 
@@ -24,7 +24,7 @@ def min_max_avg_value_product(language_id):
                                               MAX(pv.value::float4) AS max_value,
                                               AVG(pv.value::float4) AS avg_value
                                        FROM attributes ca
-                                                LEFT JOIN products_value pv ON pv.attribute_id = ca.uuid
+                                                LEFT JOIN product_values pv ON pv.attribute_id = ca.uuid
                                                 LEFT JOIN attributes_translate tc
                                                           ON tc.attribute_id = pv.attribute_id AND tc.language = :language_id
 
